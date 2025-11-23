@@ -120,20 +120,22 @@
       
       return React.createElement('div', { 
         style: { 
-          padding: '2px 6px',
+          padding: '4px 8px',
           backgroundColor: '#ffffff',
-          borderRadius: '3px',
+          borderRadius: '4px',
           border: '1px solid #e0e0e0',
           boxShadow: '0 1px 2px rgba(0,0,0,0.05)',
-          margin: '0'
+          margin: '0',
+          minHeight: 'auto',
+          overflow: 'visible'
         } 
       },
         React.createElement('div', { 
           style: { 
             display: 'flex',
             alignItems: 'center',
-            marginBottom: '2px',
-            paddingBottom: '2px',
+            marginBottom: '4px',
+            paddingBottom: '4px',
             borderBottom: '1px solid #f0f0f0'
           } 
         },
@@ -141,11 +143,12 @@
           React.createElement('h3', { 
             style: { 
               margin: 0,
-              fontSize: '11px',
+              fontSize: '12px',
               fontWeight: 600,
               color: '#1a1a1a',
               letterSpacing: '-0.1px',
-              lineHeight: '1.1'
+              lineHeight: '1.2',
+              whiteSpace: 'nowrap'
             } 
           }, 'GlueOps')
         ),
@@ -168,9 +171,10 @@
         React.createElement('div', { 
           style: { 
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(100px, 1fr))',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(90px, 1fr))',
             gap: '4px',
-            position: 'relative'
+            position: 'relative',
+            overflow: 'visible'
           } 
         },
           entries.map(([groupLabel, linkArray], groupIdx) => {
@@ -226,14 +230,17 @@
                   fontWeight: 500,
                   color: '#24292f',
                   transition: 'all 0.2s ease',
-                  boxShadow: isHovered ? '0 1px 2px rgba(0,0,0,0.1)' : 'none'
+                  boxShadow: isHovered ? '0 1px 2px rgba(0,0,0,0.1)' : 'none',
+                  whiteSpace: 'nowrap',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis'
                 }
               },
-                React.createElement('span', { style: { display: 'flex', alignItems: 'center', gap: '4px' } },
-                  React.createElement('span', { style: { fontSize: '12px' } }, icon),
-                  React.createElement('span', {}, groupLabel)
+                React.createElement('span', { style: { display: 'flex', alignItems: 'center', gap: '4px', minWidth: 0, flex: 1 } },
+                  React.createElement('span', { style: { fontSize: '12px', flexShrink: 0 } }, icon),
+                  React.createElement('span', { style: { overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' } }, groupLabel)
                 ),
-                React.createElement('span', { style: { fontSize: '8px', color: '#656d76', transform: isHovered ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s' } }, '▼')
+                React.createElement('span', { style: { fontSize: '8px', color: '#656d76', transform: isHovered ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s', flexShrink: 0, marginLeft: '4px' } }, '▼')
               ),
               isHovered && !isSingleLink && links.length > 1 && React.createElement('div', {
                 style: {
@@ -245,10 +252,11 @@
                   backgroundColor: '#ffffff',
                   border: '1px solid #d0d7de',
                   borderRadius: '3px',
-                  boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
-                  zIndex: 1000,
+                  boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
+                  zIndex: 10000,
                   padding: '2px 0',
-                  overflow: 'hidden'
+                  overflow: 'visible',
+                  minWidth: '150px'
                 }
               },
                 links.map((link, linkIdx) =>
@@ -264,7 +272,10 @@
                       color: '#24292f',
                       fontSize: '11px',
                       transition: 'background-color 0.15s',
-                      borderBottom: linkIdx < links.length - 1 ? '1px solid #f0f0f0' : 'none'
+                      borderBottom: linkIdx < links.length - 1 ? '1px solid #f0f0f0' : 'none',
+                      whiteSpace: 'nowrap',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis'
                     },
                     onMouseEnter: (e) => { e.target.style.backgroundColor = '#f6f8fa'; },
                     onMouseLeave: (e) => { e.target.style.backgroundColor = 'transparent'; }

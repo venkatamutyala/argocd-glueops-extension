@@ -120,19 +120,20 @@
       
       return React.createElement('div', { 
         style: { 
-          padding: '8px 12px',
+          padding: '4px 8px',
           backgroundColor: '#ffffff',
-          borderRadius: '8px',
+          borderRadius: '4px',
           border: '1px solid #e0e0e0',
-          boxShadow: '0 2px 4px rgba(0,0,0,0.05)'
+          boxShadow: '0 1px 2px rgba(0,0,0,0.05)',
+          margin: '0'
         } 
       },
         React.createElement('div', { 
           style: { 
             display: 'flex',
             alignItems: 'center',
-            marginBottom: '8px',
-            paddingBottom: '8px',
+            marginBottom: '4px',
+            paddingBottom: '4px',
             borderBottom: '1px solid #f0f0f0'
           } 
         },

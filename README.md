@@ -25,15 +25,37 @@ A UI extension for ArgoCD that displays dynamic quick links for applications, us
 
 ## Quick Start
 
-### Option 1: Automated Deployment Script
+### Option 1: Download from GitHub Release (Recommended)
+
+The extension is available as a pre-built release on GitHub:
+
+```bash
+# Download the extension
+curl -L -o extension.tar.gz https://github.com/venkatamutyala/argocd-glueops-extension/releases/download/v1.0.0/extension.tar.gz
+
+# Create ConfigMap
+kubectl create configmap extension-tar \
+  --from-file=extension.tar.gz=extension.tar.gz \
+  -n argocd
+
+# Continue with deployment steps below
+```
+
+### Option 2: Automated Deployment Script
 
 ```bash
 ./deploy.sh
 ```
 
-### Option 2: Manual Deployment
+### Option 3: Manual Deployment
 
 Follow the step-by-step instructions in [DEPLOY.md](DEPLOY.md) or see the detailed guide below.
+
+## GitHub Repository
+
+- **Repository**: https://github.com/venkatamutyala/argocd-glueops-extension
+- **Latest Release**: https://github.com/venkatamutyala/argocd-glueops-extension/releases/latest
+- **Extension Download URL**: https://github.com/venkatamutyala/argocd-glueops-extension/releases/download/v1.0.0/extension.tar.gz
 
 ## Deployment Steps
 

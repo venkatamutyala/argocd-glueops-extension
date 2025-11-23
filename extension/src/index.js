@@ -120,9 +120,9 @@
       
       return React.createElement('div', { 
         style: { 
-          padding: '4px 8px',
+          padding: '2px 6px',
           backgroundColor: '#ffffff',
-          borderRadius: '4px',
+          borderRadius: '3px',
           border: '1px solid #e0e0e0',
           boxShadow: '0 1px 2px rgba(0,0,0,0.05)',
           margin: '0'
@@ -132,8 +132,8 @@
           style: { 
             display: 'flex',
             alignItems: 'center',
-            marginBottom: '4px',
-            paddingBottom: '4px',
+            marginBottom: '2px',
+            paddingBottom: '2px',
             borderBottom: '1px solid #f0f0f0'
           } 
         },
@@ -141,11 +141,11 @@
           React.createElement('h3', { 
             style: { 
               margin: 0,
-              fontSize: '13px',
+              fontSize: '11px',
               fontWeight: 600,
               color: '#1a1a1a',
-              letterSpacing: '-0.2px',
-              lineHeight: '1.2'
+              letterSpacing: '-0.1px',
+              lineHeight: '1.1'
             } 
           }, 'GlueOps')
         ),
@@ -153,23 +153,23 @@
           style: { 
             textAlign: 'center', 
             color: '#666', 
-            padding: '24px 0',
-            fontSize: '14px'
+            padding: '8px 0',
+            fontSize: '11px'
           } 
-        }, '⏳ Loading links...') :
+        }, '⏳ Loading...') :
         !hasData ? React.createElement('div', { 
           style: { 
             textAlign: 'center', 
             color: '#999', 
-            padding: '24px 0',
-            fontSize: '14px'
+            padding: '8px 0',
+            fontSize: '11px'
           } 
-        }, '📭 No links available') :
+        }, '📭 No links') :
         React.createElement('div', { 
           style: { 
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))',
-            gap: '10px',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(100px, 1fr))',
+            gap: '4px',
             position: 'relative'
           } 
         },
@@ -217,16 +217,16 @@
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'space-between',
-                  padding: '12px 14px',
+                  padding: '4px 6px',
                   backgroundColor: isHovered ? '#f8f9fa' : '#ffffff',
                   border: `1px solid ${isHovered ? '#d0d7de' : '#e1e4e8'}`,
-                  borderRadius: '6px',
+                  borderRadius: '3px',
                   cursor: 'pointer',
-                  fontSize: '14px',
+                  fontSize: '11px',
                   fontWeight: 500,
                   color: '#24292f',
                   transition: 'all 0.2s ease',
-                  boxShadow: isHovered ? '0 2px 4px rgba(0,0,0,0.1)' : 'none'
+                  boxShadow: isHovered ? '0 1px 2px rgba(0,0,0,0.1)' : 'none'
                 }
               },
                 React.createElement('span', { style: { display: 'flex', alignItems: 'center', gap: '8px' } },
@@ -259,10 +259,10 @@
                     rel: 'noopener noreferrer',
                     style: {
                       display: 'block',
-                      padding: '10px 14px',
+                      padding: '6px 8px',
                       textDecoration: 'none',
                       color: '#24292f',
-                      fontSize: '13px',
+                      fontSize: '11px',
                       transition: 'background-color 0.15s',
                       borderBottom: linkIdx < links.length - 1 ? '1px solid #f0f0f0' : 'none'
                     },
@@ -280,108 +280,8 @@
       extensionsAPI.registerStatusPanelExtension(AppLinksComponent, 'GlueOps', 'glueops');
     }
     if (typeof extensionsAPI.registerAppViewExtension === 'function') {
-      // Register with fa-link icon so button renders, then replace with bee logo
+      // Keep paperclip icon - no replacement needed
       extensionsAPI.registerAppViewExtension(AppLinksComponent, 'GlueOps', 'fa-link');
-      
-      // Inject CSS and DOM manipulation to replace the icon with bee logo
-      const injectIconStyle = () => {
-        const existing = document.getElementById('glueops-icon-style');
-        if (existing) existing.remove();
-        
-        const style = document.createElement('style');
-        style.id = 'glueops-icon-style';
-        style.textContent = `
-          /* Hide default icons - comprehensive selectors */
-          button[aria-label*="GlueOps" i] i,
-          button[aria-label*="GlueOps" i]::before,
-          button[aria-label*="GlueOps" i] .fa,
-          button[title*="GlueOps" i] i,
-          button[title*="GlueOps" i]::before,
-          [data-extension-name*="glueops" i] i,
-          [data-extension-name*="glueops" i]::before,
-          .extensions-app-view-extension-glueops i,
-          .extensions-app-view-extension-glueops::before {
-            display: none !important;
-            visibility: hidden !important;
-            opacity: 0 !important;
-            width: 0 !important;
-            height: 0 !important;
-          }
-          /* Inject bee logo - comprehensive selectors */
-          button[aria-label*="GlueOps" i],
-          button[title*="GlueOps" i],
-          [data-extension-name*="glueops" i],
-          .extensions-app-view-extension-glueops {
-            background-image: url('https://cdn.glueops.dev/logos/logo.png') !important;
-            background-size: 18px 18px !important;
-            background-repeat: no-repeat !important;
-            background-position: center !important;
-            min-width: 18px !important;
-            min-height: 18px !important;
-            padding: 4px !important;
-          }
-          button[aria-label*="GlueOps" i] span,
-          button[aria-label*="GlueOps" i]::after {
-            display: none !important;
-          }
-        `;
-        document.head.appendChild(style);
-        
-        // Also update buttons dynamically with more aggressive DOM manipulation
-        const updateButtons = () => {
-          const buttons = document.querySelectorAll('button, [role="button"], a[role="button"]');
-          buttons.forEach(btn => {
-            const label = (btn.getAttribute('aria-label') || btn.getAttribute('title') || btn.textContent || '').toLowerCase();
-            if (label.includes('glueops')) {
-              // Remove all icon elements
-              const icons = btn.querySelectorAll('i, .fa, [class*="icon"], svg, [class*="fa-"]');
-              icons.forEach(icon => {
-                icon.style.display = 'none';
-                icon.style.visibility = 'hidden';
-                icon.style.opacity = '0';
-                icon.style.width = '0';
-                icon.style.height = '0';
-                icon.remove();
-              });
-              
-              // Remove text content
-              const textNodes = Array.from(btn.childNodes).filter(node => node.nodeType === 3);
-              textNodes.forEach(node => node.remove());
-              
-              // Set background image
-              btn.style.backgroundImage = 'url(https://cdn.glueops.dev/logos/logo.png)';
-              btn.style.backgroundSize = '18px 18px';
-              btn.style.backgroundRepeat = 'no-repeat';
-              btn.style.backgroundPosition = 'center';
-              btn.style.minWidth = '18px';
-              btn.style.minHeight = '18px';
-              btn.style.width = '18px';
-              btn.style.height = '18px';
-              btn.style.padding = '4px';
-              btn.style.margin = '0';
-              
-              // Ensure no text shows
-              btn.textContent = '';
-              btn.innerHTML = '';
-            }
-          });
-        };
-        
-        updateButtons();
-        setTimeout(updateButtons, 500);
-        setTimeout(updateButtons, 2000);
-        
-        const observer = new MutationObserver(updateButtons);
-        observer.observe(document.body, { childList: true, subtree: true });
-      };
-      
-      if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', injectIconStyle);
-      } else {
-        injectIconStyle();
-      }
-      setTimeout(injectIconStyle, 1000);
-      setTimeout(injectIconStyle, 3000);
     }
   }
   if (document.readyState === 'loading') {

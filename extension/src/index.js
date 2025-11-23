@@ -97,37 +97,18 @@
       const entries = Object.entries(links);
       const hasData = entries.length > 0 && !error;
       
-      // Bee logo SVG (inline) - Friendly bee with Glue Ops bottle
-      const beeLogo = React.createElement('svg', {
-        width: '36',
-        height: '36',
-        viewBox: '0 0 120 120',
-        style: { verticalAlign: 'middle', marginRight: '10px', flexShrink: 0 }
-      },
-        // Bee head (yellow circle)
-        React.createElement('circle', { cx: '50', cy: '40', r: '18', fill: '#FFD700', stroke: '#000', strokeWidth: '2.5' }),
-        // Bee eyes
-        React.createElement('circle', { cx: '45', cy: '38', r: '4', fill: '#000' }),
-        React.createElement('circle', { cx: '55', cy: '38', r: '4', fill: '#000' }),
-        // Bee smile
-        React.createElement('path', { d: 'M 42 48 Q 50 52 58 48', stroke: '#000', strokeWidth: '2', fill: 'none', strokeLinecap: 'round' }),
-        // Bee antennae
-        React.createElement('line', { x1: '45', y1: '25', x2: '42', y2: '18', stroke: '#000', strokeWidth: '2', strokeLinecap: 'round' }),
-        React.createElement('line', { x1: '55', y1: '25', x2: '58', y2: '18', stroke: '#000', strokeWidth: '2', strokeLinecap: 'round' }),
-        React.createElement('circle', { cx: '42', cy: '18', r: '2', fill: '#000' }),
-        React.createElement('circle', { cx: '58', cy: '18', r: '2', fill: '#000' }),
-        // Bee body (yellow with black stripe)
-        React.createElement('ellipse', { cx: '50', cy: '65', rx: '16', ry: '20', fill: '#FFD700', stroke: '#000', strokeWidth: '2.5' }),
-        React.createElement('ellipse', { cx: '50', cy: '65', rx: '16', ry: '8', fill: '#000' }),
-        // Bee wings (transparent with outline)
-        React.createElement('ellipse', { cx: '38', cy: '55', rx: '8', ry: '12', fill: 'rgba(255,255,255,0.3)', stroke: '#000', strokeWidth: '1.5' }),
-        React.createElement('ellipse', { cx: '62', cy: '55', rx: '8', ry: '12', fill: 'rgba(255,255,255,0.3)', stroke: '#000', strokeWidth: '1.5' }),
-        // Glue Ops bottle (held by bee)
-        React.createElement('rect', { x: '70', y: '50', width: '20', height: '35', rx: '3', fill: '#FFD700', stroke: '#000', strokeWidth: '2' }),
-        React.createElement('rect', { x: '75', y: '45', width: '10', height: '8', rx: '2', fill: '#666', stroke: '#000', strokeWidth: '1.5' }),
-        React.createElement('text', { x: '80', y: '75', fontSize: '7', fill: '#000', textAnchor: 'middle', fontWeight: 'bold', fontFamily: 'Arial, sans-serif' }, 'Glue'),
-        React.createElement('text', { x: '80', y: '82', fontSize: '7', fill: '#000', textAnchor: 'middle', fontWeight: 'bold', fontFamily: 'Arial, sans-serif' }, 'Ops')
-      );
+      // GlueOps logo from CDN
+      const beeLogo = React.createElement('img', {
+        src: 'https://cdn.glueops.dev/logos/logo.png',
+        alt: 'GlueOps Logo',
+        style: {
+          width: '32px',
+          height: '32px',
+          marginRight: '10px',
+          flexShrink: 0,
+          objectFit: 'contain'
+        }
+      });
       
       // Category icons (using Unicode/emoji for simplicity)
       const categoryIcons = {
@@ -139,7 +120,7 @@
       
       return React.createElement('div', { 
         style: { 
-          padding: '20px',
+          padding: '12px 16px',
           backgroundColor: '#ffffff',
           borderRadius: '8px',
           border: '1px solid #e0e0e0',
@@ -150,9 +131,9 @@
           style: { 
             display: 'flex',
             alignItems: 'center',
-            marginBottom: '16px',
-            paddingBottom: '12px',
-            borderBottom: '2px solid #f0f0f0'
+            marginBottom: '12px',
+            paddingBottom: '10px',
+            borderBottom: '1px solid #f0f0f0'
           } 
         },
           beeLogo,

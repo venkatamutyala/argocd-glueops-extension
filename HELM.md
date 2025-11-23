@@ -141,10 +141,17 @@ All configuration is done via `helm-values.yaml`:
 3. If `extension.config` is missing from `argocd-cm` (even though it's in `helm-values.yaml`), manually patch it:
    ```bash
    kubectl patch configmap argocd-cm -n argocd --type merge \
-     -p '{"data":{"extension.config":"extensions:\n- name: app-links-extension\n  backend:\n    services:\n    - url: https://postman-echo.com"}}'
+     -p '{"data":{"extension.config":"extensions:\n- name: app-links-extension\n  backend:\n    services:\n    - url: https://postman-echo.com\n"}}'
    
    kubectl rollout restart deployment argocd-server -n argocd
    ```
    
-   Note: This is a known issue where Helm may not apply `server.config.extension.config` to the ConfigMap during initial installation. The Helm values file is correct, but you may need to manually patch the ConfigMap or upgrade Helm release.
+   After patching, check the logs to confirm registration:
+   ```bash
+   kubectl logs -n argocd <argocd-server-pod> | grep -i "extensions configs updated"
+   ```
+   
+   You should see: `extensions configs updated successfully`
+   
+   Note: This is a known issue where Helm may not apply `server.config.extension.config` to the ConfigMap during initial installation. The Helm values file is correct, but you may need to manually patch the ConfigMap or upgrade Helm release. After the ConfigMap is updated, ArgoCD will automatically detect the change and register the extension.
 

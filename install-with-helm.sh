@@ -74,3 +74,21 @@ echo "  kubectl port-forward -n argocd svc/argocd-server 8080:443"
 echo "  Then open https://localhost:8080"
 echo ""
 
+
+
+kubectl apply -f - <<EOF
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: guestbook
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/argoproj/argocd-example-apps.git
+    targetRevision: HEAD
+    path: guestbook
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: guestbook
+EOF

@@ -102,9 +102,9 @@
         src: 'https://cdn.glueops.dev/logos/logo.png',
         alt: 'GlueOps Logo',
         style: {
-          width: '32px',
-          height: '32px',
-          marginRight: '10px',
+          width: '28px',
+          height: '28px',
+          marginRight: '8px',
           flexShrink: 0,
           objectFit: 'contain'
         }
@@ -120,7 +120,7 @@
       
       return React.createElement('div', { 
         style: { 
-          padding: '12px 16px',
+          padding: '8px 12px',
           backgroundColor: '#ffffff',
           borderRadius: '8px',
           border: '1px solid #e0e0e0',
@@ -131,8 +131,8 @@
           style: { 
             display: 'flex',
             alignItems: 'center',
-            marginBottom: '12px',
-            paddingBottom: '10px',
+            marginBottom: '8px',
+            paddingBottom: '8px',
             borderBottom: '1px solid #f0f0f0'
           } 
         },
@@ -140,7 +140,7 @@
           React.createElement('h3', { 
             style: { 
               margin: 0,
-              fontSize: '18px',
+              fontSize: '16px',
               fontWeight: 700,
               color: '#1a1a1a',
               letterSpacing: '-0.3px'
@@ -278,7 +278,31 @@
       extensionsAPI.registerStatusPanelExtension(AppLinksComponent, 'GlueOps', 'glueops');
     }
     if (typeof extensionsAPI.registerAppViewExtension === 'function') {
-      extensionsAPI.registerAppViewExtension(AppLinksComponent, 'GlueOps', 'fa-link');
+      // Register with empty icon class, then use CSS to inject bee logo
+      extensionsAPI.registerAppViewExtension(AppLinksComponent, 'GlueOps', '');
+      
+      // Inject CSS to replace the icon with bee logo
+      const style = document.createElement('style');
+      style.textContent = `
+        .extensions-app-view-extension-glueops i,
+        .extensions-app-view-extension-glueops::before,
+        button[aria-label="GlueOps"] i,
+        button[aria-label="GlueOps"]::before {
+          display: none !important;
+        }
+        .extensions-app-view-extension-glueops,
+        button[aria-label="GlueOps"] {
+          background-image: url('https://cdn.glueops.dev/logos/logo.png') !important;
+          background-size: 20px 20px !important;
+          background-repeat: no-repeat !important;
+          background-position: center !important;
+          width: 20px !important;
+          height: 20px !important;
+          border: none !important;
+          padding: 0 !important;
+        }
+      `;
+      document.head.appendChild(style);
     }
   }
   if (document.readyState === 'loading') {

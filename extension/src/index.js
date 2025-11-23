@@ -197,24 +197,27 @@
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'space-between',
-                  padding: '12px 14px',
+                  padding: '4px 6px',
                   backgroundColor: isHovered ? '#f8f9fa' : '#ffffff',
                   border: `1px solid ${isHovered ? '#d0d7de' : '#e1e4e8'}`,
-                  borderRadius: '6px',
+                  borderRadius: '3px',
                   cursor: 'pointer',
-                  fontSize: '14px',
+                  fontSize: '11px',
                   fontWeight: 500,
                   color: '#24292f',
                   transition: 'all 0.2s ease',
                   textDecoration: 'none',
-                  boxShadow: isHovered ? '0 2px 4px rgba(0,0,0,0.1)' : 'none'
+                  boxShadow: isHovered ? '0 1px 2px rgba(0,0,0,0.1)' : 'none',
+                  whiteSpace: 'nowrap',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis'
                 }
               },
-                React.createElement('span', { style: { display: 'flex', alignItems: 'center', gap: '4px' } },
-                  React.createElement('span', { style: { fontSize: '12px' } }, icon),
-                  React.createElement('span', {}, typeof links[0] === 'string' ? groupLabel : links[0].label || groupLabel)
+                React.createElement('span', { style: { display: 'flex', alignItems: 'center', gap: '4px', minWidth: 0, flex: 1 } },
+                  React.createElement('span', { style: { fontSize: '12px', flexShrink: 0 } }, icon),
+                  React.createElement('span', { style: { overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' } }, typeof links[0] === 'string' ? groupLabel : links[0].label || groupLabel)
                 ),
-                React.createElement('span', { style: { fontSize: '10px', color: '#656d76' } }, '→')
+                React.createElement('span', { style: { fontSize: '10px', color: '#656d76', flexShrink: 0, marginLeft: '4px' } }, '→')
               ) :
               React.createElement('div', {
                 style: {

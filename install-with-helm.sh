@@ -20,26 +20,12 @@ echo "📦 Adding ArgoCD Helm repository..."
 helm repo add argo https://argoproj.github.io/argo-helm 2>/dev/null || true
 helm repo update
 
-# Download extension
-echo "📥 Downloading extension from GitHub release..."
-EXTENSION_VERSION="${EXTENSION_VERSION:-v1.0.0}"
-curl -L -o extension.tar.gz https://github.com/venkatamutyala/argocd-glueops-extension/releases/download/${EXTENSION_VERSION}/extension.tar.gz
-
-if [ ! -f extension.tar.gz ] || [ ! -s extension.tar.gz ]; then
-    echo "❌ Failed to download extension.tar.gz"
-    exit 1
-fi
-
 # Create namespace
 echo "📦 Creating namespace..."
 kubectl create namespace argocd --dry-run=client -o yaml | kubectl apply -f -
 
-# Create extension ConfigMap
-echo "📦 Creating extension ConfigMap..."
-kubectl create configmap extension-tar \
-  --from-file=extension.tar.gz=extension.tar.gz \
-  -n argocd \
-  --dry-run=client -o yaml | kubectl apply -f -
+# Extension will be downloaded automatically from GitHub releases during installation
+echo "✅ Extension will be downloaded from GitHub releases automatically"
 
 # Install ArgoCD with Helm
 echo "📦 Installing ArgoCD with Helm chart..."

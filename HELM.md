@@ -28,22 +28,13 @@ helm repo add argo https://argoproj.github.io/argo-helm
 helm repo update
 ```
 
-### 2. Download the Extension
+### 2. Install ArgoCD with Extension
 
-```bash
-curl -L -o extension.tar.gz https://github.com/venkatamutyala/argocd-glueops-extension/releases/download/v1.0.0/extension.tar.gz
-```
-
-### 3. Create Extension ConfigMap
+The extension is automatically downloaded from GitHub releases during installation. No manual download or ConfigMap creation needed!
 
 ```bash
 kubectl create namespace argocd
-kubectl create configmap extension-tar \
-  --from-file=extension.tar.gz=extension.tar.gz \
-  -n argocd
 ```
-
-### 4. Install ArgoCD with Extension
 
 ```bash
 helm install argocd argo/argo-cd \
@@ -58,13 +49,13 @@ helm install argocd argo/argo-cd \
 kubectl wait --for=condition=ready pod -l app.kubernetes.io/name=argocd-server -n argocd --timeout=300s
 ```
 
-### 6. Get Admin Password
+### 4. Get Admin Password
 
 ```bash
 kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d && echo
 ```
 
-### 7. Access ArgoCD
+### 5. Access ArgoCD
 
 ```bash
 kubectl port-forward -n argocd svc/argocd-server 8080:443
@@ -85,30 +76,26 @@ kubectl exec -n argocd $(kubectl get pods -n argocd -l app.kubernetes.io/name=ar
 
 To update to a new version:
 
-1. Download the new extension:
-   ```bash
-   curl -L -o extension.tar.gz https://github.com/venkatamutyala/argocd-glueops-extension/releases/download/v1.0.1/extension.tar.gz
+1. Update the `EXTENSION_URL` in `helm-values.yaml` to point to the new release:
+   ```yaml
+   - name: EXTENSION_URL
+     value: https://github.com/venkatamutyala/argocd-glueops-extension/releases/download/v1.0.1/extension.tar.gz
    ```
 
-2. Update the ConfigMap:
+2. Upgrade the Helm release:
    ```bash
-   kubectl create configmap extension-tar \
-     --from-file=extension.tar.gz=extension.tar.gz \
-     -n argocd \
-     --dry-run=client -o yaml | kubectl apply -f -
+   helm upgrade argocd argo/argo-cd -f helm-values.yaml -n argocd
    ```
 
-3. Restart ArgoCD server:
-   ```bash
-   kubectl rollout restart deployment argocd-server -n argocd
-   ```
+3. The extension will be automatically downloaded and installed on the next pod restart.
 
 ## Uninstallation
 
 ```bash
 helm uninstall argocd -n argocd
-kubectl delete configmap extension-tar -n argocd
 ```
+
+No ConfigMap cleanup needed - the extension is downloaded directly from GitHub!
 
 ## Configuration
 
@@ -129,9 +116,9 @@ All configuration is done via `helm-values.yaml`:
    kubectl logs -n argocd <argocd-server-pod> -c argocd-extension-installer
    ```
 
-2. Verify the ConfigMap exists:
+2. Verify the extension URL is accessible:
    ```bash
-   kubectl get configmap extension-tar -n argocd
+   curl -I https://github.com/venkatamutyala/argocd-glueops-extension/releases/download/v1.0.0/extension.tar.gz
    ```
 
 3. Check if extension file exists in pod:

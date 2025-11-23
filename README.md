@@ -27,7 +27,7 @@ A UI extension for ArgoCD that displays dynamic quick links for applications, us
 
 ### Option 1: Install with Helm Chart (Recommended)
 
-The easiest way to install ArgoCD with the GlueOps extension is using the Helm chart:
+The easiest way to install ArgoCD with the GlueOps extension is using the Helm chart. The extension is automatically downloaded from GitHub releases - no manual download needed!
 
 ```bash
 # Run the automated installation script
@@ -41,16 +41,11 @@ Or manually:
 helm repo add argo https://argoproj.github.io/argo-helm
 helm repo update
 
-# 2. Download extension
-curl -L -o extension.tar.gz https://github.com/venkatamutyala/argocd-glueops-extension/releases/download/v1.0.0/extension.tar.gz
-
-# 3. Create ConfigMap
-kubectl create namespace argocd
-kubectl create configmap extension-tar --from-file=extension.tar.gz=extension.tar.gz -n argocd
-
-# 4. Install ArgoCD with Helm
-helm install argocd argo/argo-cd -f helm-values.yaml -n argocd --wait
+# 2. Install ArgoCD with extension (extension downloads automatically from GitHub)
+helm install argocd argo/argo-cd -f helm-values.yaml -n argocd --create-namespace --wait
 ```
+
+The extension is configured to download from: `https://github.com/venkatamutyala/argocd-glueops-extension/releases/download/v1.0.0/extension.tar.gz`
 
 See [HELM.md](HELM.md) for detailed instructions.
 

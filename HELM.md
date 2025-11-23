@@ -1,6 +1,16 @@
 # Installing ArgoCD with GlueOps Extension using Helm Chart
 
-This guide shows how to install ArgoCD with the GlueOps extension using the official ArgoCD Helm chart.
+This guide shows how to install ArgoCD with the GlueOps extension using the official ArgoCD Helm chart. This is the **recommended** installation method.
+
+## Quick Start
+
+Run the automated installation script:
+
+```bash
+./install-with-helm.sh
+```
+
+This will handle everything automatically. For manual installation, see below.
 
 ## Prerequisites
 
@@ -104,7 +114,7 @@ kubectl delete configmap extension-tar -n argocd
 
 All configuration is done via `helm-values.yaml`:
 
-- **Proxy Extension**: Enabled via `server.extraArgs`
+- **Proxy Extension**: Enabled via `configs.params.server.enable.proxy.extension: "true"`
 - **Backend URL**: Configured in `server.config.extension.config` (hardcoded to Postman Echo)
 - **RBAC**: Configured in `configs.rbac.policy.csv`
 - **Extension Installer**: Configured in `server.initContainers`

@@ -53,28 +53,12 @@ jobs:
         echo "version=${VERSION}" >> $GITHUB_OUTPUT
         echo "Version: ${VERSION}"
         
-    - name: Create Release Asset
+    - name: Upload Release Asset
       if: github.event_name == 'release'
       uses: softprops/action-gh-release@v1
       with:
         files: extension.tar.gz
         tag_name: ${{ github.event.release.tag_name }}
-        name: ${{ github.event.release.tag_name }}
-        body: |
-          ArgoCD GlueOps Extension Release
-          
-          **Download**: [extension.tar.gz](https://github.com/${{ github.repository }}/releases/download/${{ github.event.release.tag_name }}/extension.tar.gz)
-          
-          ## Installation
-          
-          ```bash
-          curl -L -o extension.tar.gz https://github.com/${{ github.repository }}/releases/download/${{ github.event.release.tag_name }}/extension.tar.gz
-          kubectl create configmap extension-tar \
-            --from-file=extension.tar.gz=extension.tar.gz \
-            -n argocd
-          ```
-          
-          ${{ github.event.release.body }}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         

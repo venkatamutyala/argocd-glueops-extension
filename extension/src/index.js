@@ -206,11 +206,11 @@
                   boxShadow: isHovered ? '0 2px 4px rgba(0,0,0,0.1)' : 'none'
                 }
               },
-                React.createElement('span', { style: { display: 'flex', alignItems: 'center', gap: '8px' } },
-                  React.createElement('span', { style: { fontSize: '16px' } }, icon),
+                React.createElement('span', { style: { display: 'flex', alignItems: 'center', gap: '4px' } },
+                  React.createElement('span', { style: { fontSize: '12px' } }, icon),
                   React.createElement('span', {}, typeof links[0] === 'string' ? groupLabel : links[0].label || groupLabel)
                 ),
-                React.createElement('span', { style: { fontSize: '12px', color: '#656d76' } }, '→')
+                React.createElement('span', { style: { fontSize: '10px', color: '#656d76' } }, '→')
               ) :
               React.createElement('div', {
                 style: {
@@ -229,11 +229,11 @@
                   boxShadow: isHovered ? '0 1px 2px rgba(0,0,0,0.1)' : 'none'
                 }
               },
-                React.createElement('span', { style: { display: 'flex', alignItems: 'center', gap: '8px' } },
-                  React.createElement('span', { style: { fontSize: '16px' } }, icon),
+                React.createElement('span', { style: { display: 'flex', alignItems: 'center', gap: '4px' } },
+                  React.createElement('span', { style: { fontSize: '12px' } }, icon),
                   React.createElement('span', {}, groupLabel)
                 ),
-                React.createElement('span', { style: { fontSize: '10px', color: '#656d76', transform: isHovered ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s' } }, '▼')
+                React.createElement('span', { style: { fontSize: '8px', color: '#656d76', transform: isHovered ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s' } }, '▼')
               ),
               isHovered && !isSingleLink && links.length > 1 && React.createElement('div', {
                 style: {
@@ -241,13 +241,13 @@
                   top: '100%',
                   left: 0,
                   right: 0,
-                  marginTop: '6px',
+                  marginTop: '2px',
                   backgroundColor: '#ffffff',
                   border: '1px solid #d0d7de',
-                  borderRadius: '6px',
-                  boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+                  borderRadius: '3px',
+                  boxShadow: '0 2px 6px rgba(0,0,0,0.15)',
                   zIndex: 1000,
-                  padding: '4px 0',
+                  padding: '2px 0',
                   overflow: 'hidden'
                 }
               },

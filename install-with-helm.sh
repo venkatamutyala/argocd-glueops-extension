@@ -1,6 +1,10 @@
 #!/bin/bash
 set -e
 
+
+kind delete cluster || true
+kind create cluster
+
 echo "🚀 Installing ArgoCD with GlueOps Extension using Helm Chart"
 echo ""
 

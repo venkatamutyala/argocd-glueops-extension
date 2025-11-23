@@ -4,10 +4,8 @@
 #   2. Create ConfigMap: kubectl create configmap extension-tar --from-file=extension.tar.gz=extension.tar.gz -n argocd
 #   3. Install ArgoCD: helm install argocd argo/argo-cd -f helm-values.yaml -n argocd --create-namespace
 
-# Enable proxy extension
+# Enable proxy extension via ConfigMap (not command line args)
 server:
-  extraArgs:
-    - --server.enable.proxy.extension=true
   config:
     # Configure proxy extension backend (hardcoded Postman Echo URL)
     extension.config: |
@@ -59,4 +57,7 @@ configs:
       p, role:readonly, extensions, invoke, app-links-extension, allow
       g, admin, role:admin
       g, argocd, role:org-admin
+  # Enable proxy extension via cmd-params ConfigMap
+  params:
+    server.enable.proxy.extension: "true"
 

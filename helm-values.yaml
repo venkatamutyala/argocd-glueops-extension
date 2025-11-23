@@ -1,8 +1,14 @@
 # ArgoCD Helm Chart Values with GlueOps Extension
-# Usage: 
+# 
+# Quick Start:
 #   1. Download extension: curl -L -o extension.tar.gz https://github.com/venkatamutyala/argocd-glueops-extension/releases/download/v1.0.0/extension.tar.gz
-#   2. Create ConfigMap: kubectl create configmap extension-tar --from-file=extension.tar.gz=extension.tar.gz -n argocd
-#   3. Install ArgoCD: helm install argocd argo/argo-cd -f helm-values.yaml -n argocd --create-namespace
+#   2. Create namespace: kubectl create namespace argocd
+#   3. Create ConfigMap: kubectl create configmap extension-tar --from-file=extension.tar.gz=extension.tar.gz -n argocd
+#   4. Install ArgoCD: helm install argocd argo/argo-cd -f helm-values.yaml -n argocd
+#   5. Or use the install script: ./install-with-helm.sh
+#
+# Note: The extension.config is set in server.config.extension.config below.
+#       The proxy extension is enabled via configs.params.server.enable.proxy.extension
 
 # Enable proxy extension via ConfigMap (not command line args)
 server:

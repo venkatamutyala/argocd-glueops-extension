@@ -102,9 +102,9 @@
         src: 'https://cdn.glueops.dev/logos/logo.png',
         alt: 'GlueOps Logo',
         style: {
-          width: '28px',
-          height: '28px',
-          marginRight: '8px',
+          width: '20px',
+          height: '20px',
+          marginRight: '6px',
           flexShrink: 0,
           objectFit: 'contain'
         }
@@ -140,10 +140,11 @@
           React.createElement('h3', { 
             style: { 
               margin: 0,
-              fontSize: '16px',
-              fontWeight: 700,
+              fontSize: '13px',
+              fontWeight: 600,
               color: '#1a1a1a',
-              letterSpacing: '-0.3px'
+              letterSpacing: '-0.2px',
+              lineHeight: '1.2'
             } 
           }, 'GlueOps')
         ),
@@ -281,28 +282,86 @@
       // Register with empty icon class, then use CSS to inject bee logo
       extensionsAPI.registerAppViewExtension(AppLinksComponent, 'GlueOps', '');
       
-      // Inject CSS to replace the icon with bee logo
-      const style = document.createElement('style');
-      style.textContent = `
-        .extensions-app-view-extension-glueops i,
-        .extensions-app-view-extension-glueops::before,
-        button[aria-label="GlueOps"] i,
-        button[aria-label="GlueOps"]::before {
-          display: none !important;
-        }
-        .extensions-app-view-extension-glueops,
-        button[aria-label="GlueOps"] {
-          background-image: url('https://cdn.glueops.dev/logos/logo.png') !important;
-          background-size: 20px 20px !important;
-          background-repeat: no-repeat !important;
-          background-position: center !important;
-          width: 20px !important;
-          height: 20px !important;
-          border: none !important;
-          padding: 0 !important;
-        }
-      `;
-      document.head.appendChild(style);
+      // Inject CSS to replace the icon with bee logo - improved with multiple selectors and dynamic updates
+      const injectIconStyle = () => {
+        const existing = document.getElementById('glueops-icon-style');
+        if (existing) existing.remove();
+        
+        const style = document.createElement('style');
+        style.id = 'glueops-icon-style';
+        style.textContent = `
+          /* Hide default icons - comprehensive selectors */
+          button[aria-label*="GlueOps" i] i,
+          button[aria-label*="GlueOps" i]::before,
+          button[aria-label*="GlueOps" i] .fa,
+          button[title*="GlueOps" i] i,
+          button[title*="GlueOps" i]::before,
+          [data-extension-name*="glueops" i] i,
+          [data-extension-name*="glueops" i]::before,
+          .extensions-app-view-extension-glueops i,
+          .extensions-app-view-extension-glueops::before {
+            display: none !important;
+            visibility: hidden !important;
+            opacity: 0 !important;
+            width: 0 !important;
+            height: 0 !important;
+          }
+          /* Inject bee logo - comprehensive selectors */
+          button[aria-label*="GlueOps" i],
+          button[title*="GlueOps" i],
+          [data-extension-name*="glueops" i],
+          .extensions-app-view-extension-glueops {
+            background-image: url('https://cdn.glueops.dev/logos/logo.png') !important;
+            background-size: 18px 18px !important;
+            background-repeat: no-repeat !important;
+            background-position: center !important;
+            min-width: 18px !important;
+            min-height: 18px !important;
+            padding: 4px !important;
+          }
+          button[aria-label*="GlueOps" i] span,
+          button[aria-label*="GlueOps" i]::after {
+            display: none !important;
+          }
+        `;
+        document.head.appendChild(style);
+        
+        // Also update buttons dynamically
+        const updateButtons = () => {
+          const buttons = document.querySelectorAll('button, [role="button"]');
+          buttons.forEach(btn => {
+            const label = (btn.getAttribute('aria-label') || btn.getAttribute('title') || btn.textContent || '').toLowerCase();
+            if (label.includes('glueops')) {
+              const icon = btn.querySelector('i, .fa, [class*="icon"], svg');
+              if (icon) {
+                icon.style.display = 'none';
+                icon.style.visibility = 'hidden';
+              }
+              btn.style.backgroundImage = 'url(https://cdn.glueops.dev/logos/logo.png)';
+              btn.style.backgroundSize = '18px 18px';
+              btn.style.backgroundRepeat = 'no-repeat';
+              btn.style.backgroundPosition = 'center';
+              btn.style.minWidth = '18px';
+              btn.style.minHeight = '18px';
+            }
+          });
+        };
+        
+        updateButtons();
+        setTimeout(updateButtons, 500);
+        setTimeout(updateButtons, 2000);
+        
+        const observer = new MutationObserver(updateButtons);
+        observer.observe(document.body, { childList: true, subtree: true });
+      };
+      
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', injectIconStyle);
+      } else {
+        injectIconStyle();
+      }
+      setTimeout(injectIconStyle, 1000);
+      setTimeout(injectIconStyle, 3000);
     }
   }
   if (document.readyState === 'loading') {

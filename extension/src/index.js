@@ -280,10 +280,10 @@
       extensionsAPI.registerStatusPanelExtension(AppLinksComponent, 'GlueOps', 'glueops');
     }
     if (typeof extensionsAPI.registerAppViewExtension === 'function') {
-      // Register with empty icon class, then use CSS to inject bee logo
-      extensionsAPI.registerAppViewExtension(AppLinksComponent, 'GlueOps', '');
+      // Register with fa-link icon so button renders, then replace with bee logo
+      extensionsAPI.registerAppViewExtension(AppLinksComponent, 'GlueOps', 'fa-link');
       
-      // Inject CSS to replace the icon with bee logo - improved with multiple selectors and dynamic updates
+      // Inject CSS and DOM manipulation to replace the icon with bee logo
       const injectIconStyle = () => {
         const existing = document.getElementById('glueops-icon-style');
         if (existing) existing.remove();
@@ -327,23 +327,42 @@
         `;
         document.head.appendChild(style);
         
-        // Also update buttons dynamically
+        // Also update buttons dynamically with more aggressive DOM manipulation
         const updateButtons = () => {
-          const buttons = document.querySelectorAll('button, [role="button"]');
+          const buttons = document.querySelectorAll('button, [role="button"], a[role="button"]');
           buttons.forEach(btn => {
             const label = (btn.getAttribute('aria-label') || btn.getAttribute('title') || btn.textContent || '').toLowerCase();
             if (label.includes('glueops')) {
-              const icon = btn.querySelector('i, .fa, [class*="icon"], svg');
-              if (icon) {
+              // Remove all icon elements
+              const icons = btn.querySelectorAll('i, .fa, [class*="icon"], svg, [class*="fa-"]');
+              icons.forEach(icon => {
                 icon.style.display = 'none';
                 icon.style.visibility = 'hidden';
-              }
+                icon.style.opacity = '0';
+                icon.style.width = '0';
+                icon.style.height = '0';
+                icon.remove();
+              });
+              
+              // Remove text content
+              const textNodes = Array.from(btn.childNodes).filter(node => node.nodeType === 3);
+              textNodes.forEach(node => node.remove());
+              
+              // Set background image
               btn.style.backgroundImage = 'url(https://cdn.glueops.dev/logos/logo.png)';
               btn.style.backgroundSize = '18px 18px';
               btn.style.backgroundRepeat = 'no-repeat';
               btn.style.backgroundPosition = 'center';
               btn.style.minWidth = '18px';
               btn.style.minHeight = '18px';
+              btn.style.width = '18px';
+              btn.style.height = '18px';
+              btn.style.padding = '4px';
+              btn.style.margin = '0';
+              
+              // Ensure no text shows
+              btn.textContent = '';
+              btn.innerHTML = '';
             }
           });
         };

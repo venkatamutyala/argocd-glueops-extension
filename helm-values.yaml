@@ -7,7 +7,7 @@
 # Enable proxy extension
 server:
   extraArgs:
-    - --enable.proxy.extension=true
+    - --server.enable.proxy.extension=true
   config:
     # Configure proxy extension backend (hardcoded Postman Echo URL)
     extension.config: |

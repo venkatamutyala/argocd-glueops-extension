@@ -45,8 +45,10 @@
         try {
           setLoading(true);
           setError(null);
+          const headerValue = `${appNamespace}:${appName}`;
           const headers = new Headers();
           headers.set('Accept', 'application/json');
+          headers.set('Argocd-Application-Name', headerValue);
           
           // Create abort controller for timeout
           const controller = new AbortController();

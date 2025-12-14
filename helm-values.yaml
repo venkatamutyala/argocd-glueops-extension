@@ -39,6 +39,7 @@ configs:
   # Enable proxy extension via cmd-params ConfigMap
   params:
     server.enable.proxy.extension: "true"
+    server.insecure: "true"
 
   cm:
 # Configure proxy extension backend (hardcoded Postman Echo URL)

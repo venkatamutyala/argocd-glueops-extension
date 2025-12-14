@@ -77,8 +77,8 @@
             
             // Extract categories array and metadata from API response
             setCategories(data.categories || []);
-            setLastUpdated(data.last_updated || null);
-            setMaxRows(data.metadata?.max_rows || 4);
+            setLastUpdated(data.metadata.last_updated);
+            setMaxRows(data.metadata.max_rows);
           } catch (fetchErr) {
             clearTimeout(timeoutId);
             throw fetchErr;

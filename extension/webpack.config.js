@@ -5,7 +5,7 @@ const packageJson = require('./package.json');
 module.exports = {
   entry: './src/index.js',
   output: {
-    filename: 'extension.js',
+    filename: 'extensions.js',
     path: path.resolve(__dirname, 'dist'),
     library: 'argocdAppLinksExtension',
     libraryTarget: 'window'

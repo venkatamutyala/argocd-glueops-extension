@@ -1,5 +1,23 @@
 (function() {
   'use strict';
+  
+  // Helper function to format relative time from ISO timestamp
+  function formatRelativeTime(isoTimestamp) {
+    if (!isoTimestamp) return '';
+    const now = new Date();
+    const then = new Date(isoTimestamp);
+    const diffMs = now - then;
+    const diffSeconds = Math.floor(diffMs / 1000);
+    const diffMinutes = Math.floor(diffSeconds / 60);
+    const diffHours = Math.floor(diffMinutes / 60);
+    const diffDays = Math.floor(diffHours / 24);
+    
+    if (diffSeconds < 60) return 'just now';
+    if (diffMinutes < 60) return `${diffMinutes} minute${diffMinutes !== 1 ? 's' : ''} ago`;
+    if (diffHours < 24) return `${diffHours} hour${diffHours !== 1 ? 's' : ''} ago`;
+    return `${diffDays} day${diffDays !== 1 ? 's' : ''} ago`;
+  }
+  
   function initExtension() {
     if (typeof window.extensionsAPI === 'undefined') {
       setTimeout(initExtension, 500);
@@ -13,7 +31,8 @@
       if (!appName) {
         return React.createElement('div', { style: { padding: '16px', color: '#666' } }, 'Application name not found');
       }
-      const [links, setLinks] = React.useState({});
+      const [categories, setCategories] = React.useState([]);
+      const [lastUpdated, setLastUpdated] = React.useState(null);
       const [loading, setLoading] = React.useState(true);
       const [error, setError] = React.useState(null);
       const [hoveredGroup, setHoveredGroup] = React.useState(null);
@@ -26,20 +45,16 @@
         try {
           setLoading(true);
           setError(null);
-          const headerValue = `${appNamespace}:${appName}`;
           const headers = new Headers();
           headers.set('Accept', 'application/json');
-          headers.set('Argocd-Application-Name', headerValue);
-          headers.set('Argocd-Project-Name', 'default');
           
           // Create abort controller for timeout
           const controller = new AbortController();
           const timeoutId = setTimeout(() => controller.abort(), 5000);
           
           try {
-            // Call ArgoCD proxy extension (hardcoded proxy path)
-            // ArgoCD will proxy this to https://postman-echo.com/get
-            const response = await fetch(`/extensions/app-links-extension/get?appName=${encodeURIComponent(appName)}`, {
+            // Call ArgoCD proxy extension with new API path pattern
+            const response = await fetch(`/extensions/app-links-extension/api/v1/mock/applications/${encodeURIComponent(appName)}/links`, {
               method: 'GET',
               credentials: 'include',
               headers: headers,
@@ -50,35 +65,14 @@
             if (!response.ok) {
               // Server returned error status
               setError('offline');
-              setLinks({});
+              setCategories([]);
               return;
             }
-            const echoData = await response.json();
-            // Extract app name from Postman Echo response (in args.appName)
-            const echoAppName = echoData?.args?.appName || appName;
+            const data = await response.json();
             
-            // Generate links based on app name (mimicking server-side response)
-            const data = {
-              'Dashboard': [
-                { label: 'Grafana Dashboard', url: `https://grafana.example.com/dashboard/${echoAppName}` },
-                { label: 'Custom Dashboard', url: `https://custom.example.com/dash/${echoAppName}` },
-                { label: 'Overview Dashboard', url: `https://overview.example.com/app/${echoAppName}` }
-              ],
-              'Logs': [
-                { label: 'Kibana Logs', url: `https://kibana.example.com/logs/${echoAppName}` },
-                { label: 'CloudWatch Logs', url: `https://cloudwatch.example.com/logs/${echoAppName}` },
-                { label: 'Application Logs', url: `https://logs.example.com/app/${echoAppName}` }
-              ],
-              'Metrics': [
-                { label: 'Prometheus Metrics', url: `https://prometheus.example.com/metrics/${echoAppName}` },
-                { label: 'Datadog Metrics', url: `https://datadog.example.com/metrics/${echoAppName}` }
-              ],
-              'Documentation': [
-                { label: 'API Docs', url: `https://docs.example.com/api/${echoAppName}` },
-                { label: 'Runbook', url: `https://runbook.example.com/${echoAppName}` }
-              ]
-            };
-            setLinks(data);
+            // Extract categories array and metadata from API response
+            setCategories(data.categories || []);
+            setLastUpdated(data.metadata?.last_updated || null);
           } catch (fetchErr) {
             clearTimeout(timeoutId);
             throw fetchErr;
@@ -87,15 +81,14 @@
           // Network error, timeout, or other fetch failure
           // Silently handle - don't crash ArgoCD
           setError('offline');
-          setLinks({});
+          setCategories([]);
         } finally {
           setLoading(false);
         }
       };
         fetchLinks();
       }, [appName, appNamespace]);
-      const entries = Object.entries(links);
-      const hasData = entries.length > 0 && !error;
+      const hasData = categories.length > 0 && !error;
       
       // GlueOps logo from CDN
       const beeLogo = React.createElement('img', {
@@ -109,14 +102,6 @@
           objectFit: 'contain'
         }
       });
-      
-      // Category icons (using Unicode/emoji for simplicity)
-      const categoryIcons = {
-        'Dashboard': '📊',
-        'Logs': '📋',
-        'Metrics': '📈',
-        'Documentation': '📚'
-      };
       
       return React.createElement('div', { 
         style: { 
@@ -134,23 +119,38 @@
           style: { 
             display: 'flex',
             alignItems: 'center',
+            justifyContent: 'space-between',
             marginBottom: '4px',
             paddingBottom: '4px',
             borderBottom: '1px solid #f0f0f0'
           } 
         },
-          beeLogo,
-          React.createElement('h3', { 
-            style: { 
-              margin: 0,
-              fontSize: '12px',
-              fontWeight: 600,
-              color: '#1a1a1a',
-              letterSpacing: '-0.1px',
-              lineHeight: '1.2',
+          React.createElement('div', {
+            style: {
+              display: 'flex',
+              alignItems: 'center'
+            }
+          },
+            beeLogo,
+            React.createElement('h3', { 
+              style: { 
+                margin: 0,
+                fontSize: '12px',
+                fontWeight: 600,
+                color: '#1a1a1a',
+                letterSpacing: '-0.1px',
+                lineHeight: '1.2',
+                whiteSpace: 'nowrap'
+              } 
+            }, 'GlueOps')
+          ),
+          lastUpdated && React.createElement('span', {
+            style: {
+              fontSize: '10px',
+              color: '#888',
               whiteSpace: 'nowrap'
-            } 
-          }, 'GlueOps')
+            }
+          }, formatRelativeTime(lastUpdated))
         ),
         loading ? React.createElement('div', { 
           style: { 
@@ -177,20 +177,50 @@
             overflow: 'visible'
           } 
         },
-          entries.map(([groupLabel, linkArray], groupIdx) => {
-            const links = Array.isArray(linkArray) ? linkArray : [{ label: groupLabel, url: linkArray }];
+          categories.map((category, groupIdx) => {
+            const { id, label: groupLabel, icon, status, message, links: categoryLinks } = category;
+            const links = categoryLinks || [];
             const isHovered = hoveredGroup === groupIdx;
-            const icon = categoryIcons[groupLabel] || '🔗';
+            const hasLinks = links.length > 0 && status === 'ok';
             const isSingleLink = links.length === 1;
+            const isEmptyOrError = status === 'empty' || status === 'error';
             
             return React.createElement('div', {
-              key: groupIdx,
+              key: id || groupIdx,
               style: { position: 'relative' },
               onMouseEnter: () => setHoveredGroup(groupIdx),
               onMouseLeave: () => setHoveredGroup(null)
             }, 
+              // Empty or error state - show message in muted color
+              isEmptyOrError ? React.createElement('div', {
+                style: {
+                  display: 'flex',
+                  flexDirection: 'column',
+                  padding: '4px 6px',
+                  backgroundColor: '#fafafa',
+                  border: '1px solid #e1e4e8',
+                  borderRadius: '3px',
+                  fontSize: '11px'
+                }
+              },
+                React.createElement('span', { style: { display: 'flex', alignItems: 'center', gap: '4px', fontWeight: 500, color: '#24292f', marginBottom: '2px' } },
+                  React.createElement('span', { style: { fontSize: '12px', flexShrink: 0 } }, icon || '🔗'),
+                  React.createElement('span', null, groupLabel)
+                ),
+                React.createElement('span', { 
+                  style: { 
+                    fontSize: '10px', 
+                    color: '#888',
+                    fontStyle: 'italic',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap'
+                  } 
+                }, message || 'No data available')
+              ) :
+              // Single link - make the whole button a link
               isSingleLink ? React.createElement('a', {
-                href: typeof links[0] === 'string' ? links[0] : links[0].url,
+                href: links[0].url,
                 target: '_blank',
                 rel: 'noopener noreferrer',
                 style: {
@@ -214,11 +244,12 @@
                 }
               },
                 React.createElement('span', { style: { display: 'flex', alignItems: 'center', gap: '4px', minWidth: 0, flex: 1 } },
-                  React.createElement('span', { style: { fontSize: '12px', flexShrink: 0 } }, icon),
-                  React.createElement('span', { style: { overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' } }, typeof links[0] === 'string' ? groupLabel : links[0].label || groupLabel)
+                  React.createElement('span', { style: { fontSize: '12px', flexShrink: 0 } }, icon || '🔗'),
+                  React.createElement('span', { style: { overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' } }, links[0].label || groupLabel)
                 ),
                 React.createElement('span', { style: { fontSize: '10px', color: '#656d76', flexShrink: 0, marginLeft: '4px' } }, '→')
               ) :
+              // Multiple links - show dropdown on hover
               React.createElement('div', {
                 style: {
                   display: 'flex',
@@ -240,12 +271,12 @@
                 }
               },
                 React.createElement('span', { style: { display: 'flex', alignItems: 'center', gap: '4px', minWidth: 0, flex: 1 } },
-                  React.createElement('span', { style: { fontSize: '12px', flexShrink: 0 } }, icon),
+                  React.createElement('span', { style: { fontSize: '12px', flexShrink: 0 } }, icon || '🔗'),
                   React.createElement('span', { style: { overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' } }, groupLabel)
                 ),
                 React.createElement('span', { style: { fontSize: '8px', color: '#656d76', transform: isHovered ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s', flexShrink: 0, marginLeft: '4px' } }, '▼')
               ),
-              isHovered && !isSingleLink && links.length > 1 && React.createElement('div', {
+              isHovered && hasLinks && links.length > 1 && React.createElement('div', {
                 style: {
                   position: 'absolute',
                   top: '100%',
@@ -265,7 +296,7 @@
                 links.map((link, linkIdx) =>
                   React.createElement('a', {
                     key: linkIdx,
-                    href: typeof link === 'string' ? link : link.url,
+                    href: link.url,
                     target: '_blank',
                     rel: 'noopener noreferrer',
                     style: {
@@ -282,7 +313,7 @@
                     },
                     onMouseEnter: (e) => { e.target.style.backgroundColor = '#f6f8fa'; },
                     onMouseLeave: (e) => { e.target.style.backgroundColor = 'transparent'; }
-                  }, typeof link === 'string' ? link : link.label || link.url)
+                  }, link.label || link.url)
                 )
               )
             );

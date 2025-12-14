@@ -42,10 +42,10 @@ configs:
     server.insecure: "true"
 
   cm:
-# Configure proxy extension backend (hardcoded Postman Echo URL)
+# Configure proxy extension backend
     extension.config: |
       extensions:
       - name: app-links-extension
         backend:
           services:
-          - url: https://postman-echo.com
+          - url: https://hwtk6fk1-8000.euw.devtunnels.ms

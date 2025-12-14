@@ -33,6 +33,7 @@
       }
       const [categories, setCategories] = React.useState([]);
       const [lastUpdated, setLastUpdated] = React.useState(null);
+      const [maxRows, setMaxRows] = React.useState(4);
       const [loading, setLoading] = React.useState(true);
       const [error, setError] = React.useState(null);
       const [hoveredGroup, setHoveredGroup] = React.useState(null);
@@ -77,6 +78,7 @@
             // Extract categories array and metadata from API response
             setCategories(data.categories || []);
             setLastUpdated(data.metadata?.last_updated || null);
+            setMaxRows(data.metadata?.max_rows || 4);
           } catch (fetchErr) {
             clearTimeout(timeoutId);
             throw fetchErr;
@@ -148,13 +150,22 @@
               } 
             }, 'GlueOps')
           ),
-          lastUpdated && React.createElement('span', {
+          React.createElement('div', {
             style: {
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
               fontSize: '10px',
               color: '#888',
               whiteSpace: 'nowrap'
             }
-          }, formatRelativeTime(lastUpdated))
+          },
+            React.createElement('span', {
+              style: { color: '#999' }
+            }, 'v' + __EXTENSION_VERSION__),
+            lastUpdated && React.createElement('span', {}, '•'),
+            lastUpdated && React.createElement('span', {}, formatRelativeTime(lastUpdated))
+          )
         ),
         loading ? React.createElement('div', { 
           style: { 
@@ -164,18 +175,27 @@
             fontSize: '11px'
           } 
         }, '⏳ Loading...') :
-        !hasData ? React.createElement('div', { 
+        error ? React.createElement('div', { 
+          style: { 
+            textAlign: 'center', 
+            color: '#f59e0b', 
+            padding: '8px 0',
+            fontSize: '11px'
+          } 
+        }, '⚠️ Service Unavailable') :
+        categories.length === 0 ? React.createElement('div', { 
           style: { 
             textAlign: 'center', 
             color: '#999', 
             padding: '8px 0',
             fontSize: '11px'
           } 
-        }, '📭 No links') :
+        }, '📭 No links available') :
         React.createElement('div', { 
           style: { 
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))',
+            gridTemplateRows: 'repeat(' + maxRows + ', auto)',
+            gridAutoFlow: 'column',
             gap: '4px',
             position: 'relative',
             overflow: 'visible'

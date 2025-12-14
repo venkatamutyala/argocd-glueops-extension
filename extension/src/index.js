@@ -175,7 +175,7 @@
         React.createElement('div', { 
           style: { 
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(90px, 1fr))',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))',
             gap: '4px',
             position: 'relative',
             overflow: 'visible'

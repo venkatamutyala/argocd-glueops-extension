@@ -46,9 +46,11 @@
           setLoading(true);
           setError(null);
           const headerValue = `${appNamespace}:${appName}`;
+          const projectName = application?.spec?.project || 'default';
           const headers = new Headers();
           headers.set('Accept', 'application/json');
           headers.set('Argocd-Application-Name', headerValue);
+          headers.set('Argocd-Project-Name', projectName);
           
           // Create abort controller for timeout
           const controller = new AbortController();

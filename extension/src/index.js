@@ -59,7 +59,7 @@
           
           try {
             // Call ArgoCD proxy extension with new API path pattern
-            const response = await fetch(`/extensions/app-links-extension/api/v1/fixtures/partial-data`, {
+            const response = await fetch(`/extensions/app-links-extension/api/v1/mock/applications/${appName}/links`, {
               method: 'GET',
               credentials: 'include',
               headers: headers,
@@ -269,7 +269,7 @@
               },
                 React.createElement('span', { style: { display: 'flex', alignItems: 'center', gap: '4px', minWidth: 0, flex: 1 } },
                   React.createElement('span', { style: { fontSize: '12px', flexShrink: 0 } }, icon || '🔗'),
-                  React.createElement('span', { style: { overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' } }, links[0].label || groupLabel)
+                  React.createElement('span', { style: { overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' } }, groupLabel)
                 ),
                 React.createElement('span', { style: { fontSize: '10px', color: '#656d76', flexShrink: 0, marginLeft: '4px' } }, '→')
               ) :

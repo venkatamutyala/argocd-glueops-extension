@@ -40,8 +40,8 @@ jobs:
         
     - name: Package extension
       run: |
-        mkdir -p resources/app-links-extension
-        cp extension/dist/extension.js resources/app-links-extension/extension.js
+        mkdir -p resources
+        cp extension/dist/extensions.js resources/extensions.js
         tar -czf extension.tar.gz resources/
         rm -rf resources/
         

@@ -52,11 +52,11 @@ kubectl wait --for=condition=ready pod -l app.kubernetes.io/name=argocd-server -
 echo ""
 echo "✅ Verifying extension installation..."
 if kubectl exec -n argocd $(kubectl get pods -n argocd -l app.kubernetes.io/name=argocd-server -o jsonpath='{.items[0].metadata.name}') \
-  -- ls -lh /tmp/extensions/resources/app-links-extension/extension.js 2>/dev/null; then
+  -- ls -lh /tmp/extensions/resources/extensions.js 2>/dev/null; then
     echo "✅ Extension installed successfully!"
 else
     echo "❌ Extension not found. Check logs:"
-    echo "   kubectl logs -n argocd <argocd-server-pod> -c argocd-extension-installer"
+    echo "   kubectl logs -n argocd <argocd-server-pod> -c app-links-extension"
     exit 1
 fi
 
@@ -70,8 +70,8 @@ echo ""
 echo "✅ Installation complete!"
 echo ""
 echo "Access ArgoCD:"
-echo "  kubectl port-forward -n argocd svc/argocd-server 8080:443"
-echo "  Then open https://localhost:8080"
+echo "  kubectl port-forward -n argocd svc/argocd-server 8080:80"
+echo "  Then open http://localhost:8080"
 echo ""
 
 
